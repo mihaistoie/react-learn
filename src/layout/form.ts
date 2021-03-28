@@ -8,14 +8,16 @@ import { updateLayoutRenderOptions } from "../components/layout/render-layout";
 export class Form {
     private _model: any;
     private _handlers: Map<string, any[]>;
+    private _handlersLayout: Map<string, (propertyName: string) => void>;
     private layoutsById: Map<string, LayoutDefinition>;
     private fieldsById: Map<string, LayoutPropsField>;
     private layout: LayoutDefinition;
-    constructor(layout: LayoutDefinition, schema: ISchemaDefinition, data: any, options: { authoring?: boolean } ) {
+    constructor(layout: LayoutDefinition, schema: ISchemaDefinition, data: any, options: { authoring?: boolean }) {
         this.layout = layout;
         this._model = data;
         this._model.notifyChange = this.changed.bind(this);
         this._handlers = new Map<string, any[]>();
+        this._handlersLayout = new Map<string, any>();
         this.layoutsById = new Map<string, LayoutDefinition>();
         this.fieldsById = new Map<string, LayoutPropsField>();
         walkLayouts(this.layout, null, (parent, current) => {
@@ -72,8 +74,26 @@ export class Form {
         });
 
     }
+    public subscribeToLayoutChanges(layoutId: string, handler: (propertyName: string) => void) {
+        this._handlersLayout.set(layoutId, handler);
+    }
+    public unsubscribeToLayoutChanges(layoutId: string) {
+        this._handlersLayout.delete(layoutId);
+    }
+    public notifyLayoutPropChanged(layoutId: string, propName: string) {
+        const handler = this._handlersLayout.get(layoutId);
+        if (handler) handler(propName);
+    }
     public getValue(field: string) {
         return this.model[field];
+    }
+    public isChildOfLayout(layout: LayoutDefinition, parent: LayoutDefinition): boolean {
+        let li: LayoutDefinition | null | undefined = layout;
+        while (li && li.$parentId) {
+            if (li.$id === parent.$id || li.$parentId === parent.$id) return true;
+            li = li.$parentId ? this.layoutById(li.$parentId) : null;
+        }
+        return false;
     }
     private changed(propName: string) {
         console.log(propName);

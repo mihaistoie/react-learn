@@ -1,3 +1,4 @@
+@import 'variables.scss';
 .hc-drag-image {
 	position: absolute;
 	top: -1000px;
@@ -7,3 +8,11 @@
 	width: 100px;
 	background-color: red;
 }
+
+.hc-design {
+	min-height: $design-min-height;
+} 
+
+.hc-design-in-drag {
+	background-color: $design-bck-color;
+} 

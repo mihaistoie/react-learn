@@ -1,11 +1,11 @@
-import { LayoutDefinition } from "../../layout/layout-base";
+import { LayoutDefinition, LayoutType } from "../../layout/layout-base";
 import { Form } from "../../layout/form";
 import { Helper } from "../../tools/helper";
 
 export const updateLayoutRenderOptions = (form: Form, current : LayoutDefinition, parent: LayoutDefinition | null) => {
     const isRoot = form.id === current.$id;
-    if (parent && parent.$type === 'row' ) {
-        current.$type = 'col';
+    if (parent && parent.$type === LayoutType.Row ) {
+        current.$type = LayoutType.Column;
     }
     if (current && current.$title && current.$title.value) { 
         const size = current.$title.size || 4;
@@ -30,11 +30,11 @@ export const updateLayoutRenderOptions = (form: Form, current : LayoutDefinition
 
 }
 const updateLayoutClass = (current : LayoutDefinition, isRoot: boolean, cssClass: string[]) => {
-    if (current.$type === 'block') {
+    if (current.$type === LayoutType.Block) {
         updateLayoutBlockClass(current, isRoot, cssClass);
-    } else if (current.$type === 'row') {
+    } else if (current.$type === LayoutType.Row) {
         updateLayoutRowClass(current, isRoot, cssClass);
-    } else if (current.$type === 'col') {
+    } else if (current.$type === LayoutType.Column) {
         updateLayoutColClass(current, isRoot, cssClass);
     }
     
@@ -49,13 +49,9 @@ const updateLayoutBlockClass = (current : LayoutDefinition, isRoot: boolean, css
     } else {
         if (!isRoot)
             cssClass.push('border border-primary');
-        cssClass.push('p-1');
-        cssClass.push('m-1');
-        // cssClass.push('container');
+        cssClass.push('m-1 hc-design');
     }
-    if (!current.$fields && !current.$authoring) {
-        cssClass.push('p-0');
-    }
+    
 }
 const updateLayoutRowClass = (current : LayoutDefinition, isRoot: boolean, cssClass: string[]) => {
     if (!current.$authoring) {
@@ -66,25 +62,20 @@ const updateLayoutRowClass = (current : LayoutDefinition, isRoot: boolean, cssCl
     } else {
         if (!isRoot)
             cssClass.push('border border-primary');
-        cssClass.push('p-1');
-        cssClass.push('m-1');
-        // cssClass.push('container');
+        cssClass.push('m-1 hc-design');
     }
-    if (!current.$fields && !current.$authoring) {
-        cssClass.push('p-0');
-    }
+    
 }
 const updateLayoutColClass = (current : LayoutDefinition, isRoot: boolean, cssClass: string[]) => {
+    cssClass.push('col');
     if (!current.$authoring) {
         if (current.$style) {
             cssClass.push(current.$style);
         }
-        cssClass.push('container-fluid');
     } else {
         if (!isRoot)
-            cssClass.push('border border-primary');
-        cssClass.push('p-1');
-        cssClass.push('m-1');
+            cssClass.push('border border-primary ');
+        cssClass.push('m-1 hc-design');
         // cssClass.push('container');
     }
     if (!current.$fields && !current.$authoring) {

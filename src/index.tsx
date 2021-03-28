@@ -10,6 +10,7 @@ import { FormManagerHelper } from './layout/form-manager';
 import { ISchemaDefinition } from './tools/schema';
 import { Customer } from './test';
 import { registerEditStringControl } from './components/controls/StringControl';
+import { LayoutAuthoring } from './components/layout/LayoutAuthoring';
 
 const layout: any = {
     $title: { value: 'My Name is {{firstName}} {{lastName}}', size: 2 },
@@ -29,11 +30,23 @@ const layout: any = {
                 }]
         },
         {
-            $type: 'block',
+            $type: 'row',
             $title: { value: 'Level 2', size: 3 },
-            $fields: [
-                { $bind: 'firstName', $widget: 'edit-string' },
-                { $bind: 'lastName', $widget: 'edit-string' }
+            $items: [
+                {
+                    $type: 'col',
+                    $fields: [
+                        { $bind: 'firstName', $widget: 'edit-string' },
+                        { $bind: 'lastName', $widget: 'edit-string' }
+                    ]
+                },
+                {
+                    $type: 'col',
+                    $fields: [
+                        { $bind: 'firstName', $widget: 'edit-string' },
+                        { $bind: 'lastName', $widget: 'edit-string' }
+                    ]
+                }
             ]
         }]
 };
@@ -57,14 +70,25 @@ const data = new Customer();
 data.firstName = 'John';
 data.lastName = 'DOE';
 data.readOnly = false;
-FormManagerHelper.createForm(layout, schema, data, { authoring: true });
+const authoring = true;
+const formId = FormManagerHelper.createForm(layout, schema, data, { authoring: authoring });
 registerEditStringControl();
-ReactDOM.render(
-    // <React.StrictMode>
-    <Layout {...layout} />,
-    // </React.StrictMode>,
-    document.getElementById('root')
-);
+if (authoring) {
+    ReactDOM.render(
+        <React.StrictMode>
+            <LayoutAuthoring key={layout.$id} formId={formId} layoutId={layout.$id} />,
+    </React.StrictMode>,
+        document.getElementById('root')
+    );
+
+} else {
+    ReactDOM.render(
+        <React.StrictMode>
+            <Layout key={layout.$id} formId={formId} layoutId={layout.$id} />,
+    </React.StrictMode>,
+        document.getElementById('root')
+    );
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

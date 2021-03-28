@@ -1,4 +1,8 @@
-export type TypeLayout = 'block' | 'row' | 'col';
+export enum LayoutType {
+    Block = 'block',
+    Row = 'row',
+    Column = 'col'
+}
 
 export type LayoutColumnSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
@@ -38,7 +42,7 @@ export interface LayoutPropsField extends LayoutField {
 
 export interface LayoutDefinition {
     $name?: string;
-    $type: TypeLayout;
+    $type: LayoutType;
     $style?: string;
     $items?: Array<LayoutDefinition>;
     $fields?: Array<LayoutField>;
@@ -53,6 +57,8 @@ export interface LayoutDefinition {
     $authoring?: boolean;
     $className: string;
     $renderTitle?: LayoutTitleProps;
+    $authoringInDrag?: boolean;
+    $parentId?: string;
 }
 
 export interface LayoutTitleProps {

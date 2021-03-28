@@ -28,4 +28,25 @@ export class FormManagerHelper {
             throw new Error('Innvalid Form id');
         return form;
     }
+    public static getFormAndLayout(formId?: string, layoutId?: string): [Form, LayoutDefinition] {
+        if (!formId)
+            throw new Error('Invalid Form Id');
+        const form = this.formById(formId);
+        if (!layoutId)
+            throw new Error('Invalid Layout Id');
+        const layout = form.layoutById(layoutId);
+        if (!layout)
+            throw new Error('Invalid Layout Id');
+        return [form, layout];
+    }
+
+    public static getForm(formId?: string): Form {
+        if (!formId)
+            throw new Error('Invalid Form Id');
+        const form = FormManagerHelper.formById(formId);
+        if (!form)
+            throw new Error('Invalid Form Id');
+        return form;
+    }
+
 }

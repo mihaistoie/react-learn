@@ -26,7 +26,7 @@ class AuthoringDragManager {
     private form: Form | null;
     private dragImage: HTMLElement | null;
     private blocks: Map<HTMLElement, InfoDrag>;
-    private inDragging : InfoDrag | null = null;
+    private inDragging: InfoDrag | null = null;
     public formId: string;
 
     private createDragImage() {
@@ -42,6 +42,14 @@ class AuthoringDragManager {
         }
     }
     private cleanUpDrag() {
+        const ii = this.inDragging;
+        if (ii) {
+            const layout = this.form?.layoutById(ii.id);
+            if (layout && layout.$authoringInDrag) {
+                layout.$authoringInDrag = false;
+                this.form?.notifyLayoutPropChanged(layout.$id, '$authoringInDrag');
+            }
+        }
         this.removeDragImage();
         this.inDragging = null;
     }
@@ -66,9 +74,21 @@ class AuthoringDragManager {
         return false;
     }
     private dragOverHandler(event: DragEvent) {
-        console.log('dragOver');
-        event.stopPropagation();
-        event.preventDefault();
+        const ii = this.inDragging;
+        if (!ii) {
+            event.preventDefault();
+            return false;
+        }
+        const element = event.target;
+        const dst = this.blocks.get(element as HTMLElement);
+        const layoutDst = dst ?this.form?.layoutById(dst.id) : null;
+        const layoutSource = this.form?.layoutById(ii.id);
+        if (layoutSource && layoutDst && !layoutSource.$authoringInDrag) {
+            if (!this.form?.isChildOfLayout(layoutDst, layoutDst)) {
+                layoutSource.$authoringInDrag = true;
+                this.form?.notifyLayoutPropChanged(layoutSource.$id, '$authoringInDrag');
+            }
+        }
         return false;
     }
 
@@ -138,9 +158,11 @@ class AuthoringDragManager {
     }
     public remove(element: HTMLElement) {
         const ii = this.blocks.get(element);
+        /*
         if (ii === this.inDragging) {
             this.inDragging = null;
         }
+        */
         const item = document;
         if (ii) {
             this.blocks.delete(element);
