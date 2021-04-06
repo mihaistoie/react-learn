@@ -53,12 +53,13 @@ export interface LayoutDefinition {
     $colSize?: LayoutColumnSize;
     $fieldsOptions?: LayoutFieldsOptions;
     $id: string;
+    $parentId?: string;
+    $className: string;
     $formId?: string;
     $authoring?: boolean;
-    $className: string;
     $renderTitle?: LayoutTitleProps;
     $authoringInDrag?: boolean;
-    $parentId?: string;
+    $authoringTarget?: boolean;
 }
 
 export interface LayoutTitleProps {

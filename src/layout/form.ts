@@ -22,7 +22,8 @@ export class Form {
         this.fieldsById = new Map<string, LayoutPropsField>();
         walkLayouts(this.layout, null, (parent, current) => {
             current.$id = current.$id || Helper.id();
-            current.$formId = layout.$id
+            current.$formId = layout.$id;
+            current.$parentId = parent?.$id;
             current.$authoring = !!options.authoring;
             if (current.$fields && current.$fields.length) {
                 delete current.$items;
@@ -90,7 +91,9 @@ export class Form {
     public isChildOfLayout(layout: LayoutDefinition, parent: LayoutDefinition): boolean {
         let li: LayoutDefinition | null | undefined = layout;
         while (li && li.$parentId) {
-            if (li.$id === parent.$id || li.$parentId === parent.$id) return true;
+            if (li.$id === parent.$id || li.$parentId === parent.$id) {
+                return true;
+            }
             li = li.$parentId ? this.layoutById(li.$parentId) : null;
         }
         return false;

@@ -81,12 +81,35 @@ class AuthoringDragManager {
         }
         const element = event.target;
         const dst = this.blocks.get(element as HTMLElement);
-        const layoutDst = dst ?this.form?.layoutById(dst.id) : null;
+        const layoutDst = dst ? this.form?.layoutById(dst.id) : null;
         const layoutSource = this.form?.layoutById(ii.id);
         if (layoutSource && layoutDst && !layoutSource.$authoringInDrag) {
-            if (!this.form?.isChildOfLayout(layoutDst, layoutDst)) {
+            if (!this.form?.isChildOfLayout(layoutDst, layoutSource)) {
                 layoutSource.$authoringInDrag = true;
                 this.form?.notifyLayoutPropChanged(layoutSource.$id, '$authoringInDrag');
+            }
+        }
+        if (layoutSource && layoutDst) {
+            if (!this.form?.isChildOfLayout(layoutDst, layoutSource)) {
+                console.log('ccccccccccccccccccccccc');
+                console.log(layoutDst.$id + ' ' + layoutSource.$id);
+                const x = layoutDst.$items?.find(ii => ii.$id === 'xxx');
+                if (!x) {
+                    const newItems = [...layoutDst.$items || []];
+                    newItems.push({
+                        $id: 'xxx',
+                        $type: layoutDst.$type,
+                        $formId: layoutDst.$formId,
+                        $authoring: true,
+                        $className: '',
+                        $parentId: layoutDst.$id,
+                        $authoringTarget: true,
+
+                    });
+                    layoutDst.$items = newItems;
+                    console.log("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+                    this.form?.notifyLayoutPropChanged(layoutSource.$id, '$items');
+                }
             }
         }
         return false;
@@ -108,7 +131,6 @@ class AuthoringDragManager {
         }
         dt.effectAllowed = 'move';
         dt.setData('text/plain', '');
-        console.log('xxxx');
         this.createDragImage();
         if (this.dragImage) {
             dt.setDragImage(this.dragImage, 0, 0);
